@@ -73,7 +73,8 @@ My Own Section:
 
 Input: Format-> Top Down Shoorter, Theme-> Alien desert invasion
 Output:
-![Screenshot of Game](file:///Users/bobbyzhang/Desktop/Screenshot%202026-05-02%20at%202.03.58%E2%80%AFPM.png)
+![Uploading Screenshot 2026-05-02 at 2.03.58 PM.png…]()
+
 
 
 
