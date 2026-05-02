@@ -73,7 +73,7 @@ My Own Section:
 
 Input: Format-> Top Down Shoorter, Theme-> Alien desert invasion
 Output:
-![Uploading Screenshot 2026-05-02 at 2.03.58 PM.png…]()
+![Screenshot of Game](./game.png)
 
 
 
