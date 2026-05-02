@@ -64,18 +64,16 @@ The clearest finding is:
 
 This connects to the larger procedural content generation problem. Generated game content has to fit constraints. It must be playable, not just readable.
 
-Input: Generate a jungle temple escape platformer game, Tmplate = PLatformer
+Input: Generate a jungle temple escape platformer game, Tmplate = PLatformer  
 Output: In generates a game where it is in a fixed window. The game has some platforms where players can jump onto and there is traps moving side ways where if players run into it will descrease the lives thay have. On the top left there is a UI showing how much lives and scores players have. There is also a target point where when player run into it it will destroy itself, spawn again randomly in the map, and add one score for the player.
 
 
 
-My Own Section:
+### My Own Section:
 
-Input: Format-> Top Down Shoorter, Theme-> Alien desert invasion
+Input: Format-> Top Down Shoorter, Theme-> Alien desert invasion  
 Output:
-![Screenshot of Game](./game.png)
-<img width="1470" height="955" alt="Screenshot 2026-05-02 at 2 03 58 PM" src="https://github.com/user-attachments/assets/75dfb2a3-8189-4c71-b7b8-86e406fb7cbe" />
-
+![In-game Screenshot](https://github.com/user-attachments/assets/75dfb2a3-8189-4c71-b7b8-86e406fb7cbe)
 
 
 
