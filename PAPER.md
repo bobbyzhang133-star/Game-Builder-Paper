@@ -6,7 +6,7 @@ This worked example describes a small evaluation of AI-generated quest ideas for
 
 ## 1. Introduction and research question
 
-Generative AI can quickly produce game ideas, character descriptions, quest summaries, and worldbuilding notes. That speed is impressive, but game development is not only writing. A quest seed becomes useful when it creates playable action, fits a game world, and helps a designer make decisions.
+Game development evolves rapidly in modern era, where coding now is just the basics of a game, where film making, lighting, story writting, arts and music producrtion has all start contributing largy in game development. Currently, generative AI's are also prosperousing where there are now an abundunt amount of image, music, video etc. generation AI's. Currently, interms of AI usage in game development, coding might to the first to come in people's mind. However current days, as more elements is used in game design, game developers also used AI to help them in other artistic tasks for their games like image generation and map design. Although with the various AI tools that can be used in game design in current days, the developers need to use the tools seperately and eventually put them togather and extra work is need to done to make sure the all elements generated are on-theme with each other to make the game a unity rather than forcing differnt kind of puzzles into one. Thus, this project is aiming to make a game generator, where it doesn't simply generate the codes of the game, someting that many ai's and models can already do, but also generate the sprite and images for the assests in the game, something that is currently not founded in many game or website generators.  
 
 This project asks:
 
