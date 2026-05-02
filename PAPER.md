@@ -68,6 +68,15 @@ Input: Generate a jungle temple escape platformer game, Tmplate = PLatformer
 Output: In generates a game where it is in a fixed window. The game has some platforms where players can jump onto and there is traps moving side ways where if players run into it will descrease the lives thay have. On the top left there is a UI showing how much lives and scores players have. There is also a target point where when player run into it it will destroy itself, spawn again randomly in the map, and add one score for the player.
 
 
+
+My Own Section:
+
+Input: Format-> Top Down Shoorter, Theme-> Alien desert invasion
+Output:
+![Screenshot of Game](file:///Users/bobbyzhang/Desktop/Screenshot%202026-05-02%20at%202.03.58%E2%80%AFPM.png)
+
+
+
 ## 5. Limitations
 
 This is a small paper-lite example, not a full study. The imagined pilot uses a few prompts and a hand-built rubric. The scores come from one evaluator, so they reflect one person's sense of usability. A stronger version would ask several game developers or students to rate outputs independently and compare agreement.
