@@ -1,4 +1,4 @@
-# Quest Seed Usability Lab: Evaluating AI Game-Writing Outputs Through Realistic Project Constraints
+# Game-Builder-Free: Evaluating AI Game-Writing Outputs Through Realistic Project Constraints
 
 ## Abstract
 
