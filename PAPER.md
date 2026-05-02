@@ -6,7 +6,14 @@ This worked example describes a small evaluation of AI-generated quest ideas for
 
 ## 1. Introduction and research question
 
-Game development evolves rapidly in modern era, where coding now is just the basics of a game, where film making, lighting, story writting, arts and music producrtion has all start contributing largy in game development. Currently, generative AI's are also prosperousing where there are now an abundunt amount of image, music, video etc. generation AI's. Currently, interms of AI usage in game development, coding might to the first to come in people's mind. However current days, as more elements is used in game design, game developers also used AI to help them in other artistic tasks for their games like image generation and map design. Although with the various AI tools that can be used in game design in current days, the developers need to use the tools seperately and eventually put them togather and extra work is need to done to make sure the all elements generated are on-theme with each other to make the game a unity rather than forcing differnt kind of puzzles into one. Thus, this project is aiming to make a game generator, where it doesn't simply generate the codes of the game, someting that many ai's and models can already do, but also generate the sprite and images for the assests in the game, something that is currently not founded in many game or website generators.  
+Game development is evolving rapidly; modern production now extends far beyond coding to include cinematography, lighting, narrative design, and music. The proliferation of generative AI has provided developers with a vast toolkit for creating images, audio, and video. While AI-assisted coding is often the first application that comes to mind, developers are increasingly using these tools for artistic tasks like asset generation and environmental design.
+
+However, a significant challenge remains: because these various AI tools often operate in isolation, developers must integrate the outputs manually. This leads to a lack of **thematic cohesion**, where the generated elements feel disconnected—an effect that occurs "weird" or jarring in a finished game. This project aims to bridge this gap by developing a unified "Game Narrative and Asset Generator." Unlike existing models that focus solely on code, this system explores how a single text input can be used to anchor the theme across multiple outputs, such as sprites and game logic.
+
+To do so, this research paper the following quetions need to be answered first.
+
+* **Thematic Decision Making:** How do generative AI models decide on a "theme" from a text prompt, and what mathematical representations allow them to stay consistent?
+* **Cross-Modal Communication:** In what ways can different model types—text, image, and code—communicate thematic data to each other so that the final game follows the specific "vibe" of the original input?
 
 This project asks:
 
