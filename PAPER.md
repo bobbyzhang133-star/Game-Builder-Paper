@@ -73,7 +73,7 @@ Output: In generates a game where it is in a fixed window. The game has some pla
 
 Input: Format-> Top Down Shoorter, Theme-> Alien desert invasion  
 Output:
-![In-game Screenshot](https://github.com/user-attachments/assets/75dfb2a3-8189-4c71-b7b8-86e406fb7cbe)
+![In-game Screenshot](https://github.com/user-attachments/assets/f524057b-8311-4dbd-8f55-8d1b7cbbc7a9)
 
 
 
