@@ -43,13 +43,13 @@ Tell me each one out loud first, then we rewrite together.
 
 ---
 
-## Overview
+### Overview
 
 This session was a long and iterative journey building a fully working **AI-powered HTML5 game generator** hosted on HuggingFace Spaces. The app takes a theme and game genre, generates playable game code, and generates sprite images — all for free.
 
 ---
 
-## What We Built
+### What We Built
 
 A HuggingFace Space (`LeafCat79/Game_Builder_Free`) that:
 - Takes a **theme** (e.g. "Jungle temple with ancient traps") and **game genre** as input
@@ -60,7 +60,7 @@ A HuggingFace Space (`LeafCat79/Game_Builder_Free`) that:
 
 ---
 
-## Architecture (Final)
+### Architecture (Final)
 
 | Component | Model | Provider |
 |---|---|---|
@@ -70,17 +70,17 @@ A HuggingFace Space (`LeafCat79/Game_Builder_Free`) that:
 
 ---
 
-## Problems We Encountered & How We Solved Them
+### Problems Encountered & Solutions
 
-### 1. Memory Limit Exceeded (OOM — 16GB)
+#### 1. Memory Limit Exceeded (OOM — 16GB)
 **Problem:** Loading large models locally (Qwen3-Coder-Next ~140GB, ERNIE-Image ~32GB) crashed the Space container.
 **Solution:** Switched to API-based inference — models run on external servers, Space uses ~200MB RAM.
 
-### 2. Build Timeout (Exit Code 143)
+#### 2. Build Timeout (Exit Code 143)
 **Problem:** `llama-cpp-python` compiles from C++ source during Docker build, taking 20+ minutes and exceeding HF's build timeout limit.
 **Solution:** Removed `llama-cpp-python` entirely, switched to API calls which need no compilation.
 
-### 3. HF Inference API Quota Exhausted (402 Error)
+#### 3. HF Inference API Quota Exhausted (402 Error)
 **Problem:** Free monthly HF credits depleted — every image call returned `402 Payment Required`.
 **Solution:** Tried multiple providers:
 - nscale → didn't host FLUX.1-schnell
@@ -88,7 +88,7 @@ A HuggingFace Space (`LeafCat79/Game_Builder_Free`) that:
 - Google Imagen-3 → needed Google Cloud project setup (unavailable)
 - **Pollinations.AI** → completely free, no API key, no signup ✅
 
-### 4. Game Not Working (Black Screen / Player Falls)
+#### 4. Game Not Working (Black Screen / Player Falls)
 **Problem:** Three bugs in AI-generated game code:
 1. Black screen — images not loaded before game loop started
 2. Player falls into void — `grounded=false` set inside `else` of platform loop
@@ -99,11 +99,11 @@ A HuggingFace Space (`LeafCat79/Game_Builder_Free`) that:
 - Set `grounded=false` **before** the platform loop, not inside `else`
 - Add keyboard listeners on `window`, not `canvas`
 
-### 5. Sprites Showing as Colored Boxes with Text Labels
+#### 5. Sprites Showing as Colored Boxes with Text Labels
 **Problem:** FLUX image generation was silently failing and falling back to SVG placeholders. The fallback was hiding the real error.
 **Solution:** Added visible error reporting to the status message so the actual API error could be diagnosed. Discovered the real issue was the wrong provider (`nscale` doesn't host FLUX) and depleted HF quota.
 
-### 6. Wrong Provider for Models
+#### 6. Wrong Provider for Models
 **Problem:** Multiple models claimed to be on inference providers but weren't:
 - `Qwen/Qwen3-Coder-Next` — local only, no inference provider
 - `baidu/ERNIE-Image` — on `fal-ai` provider
@@ -112,17 +112,17 @@ A HuggingFace Space (`LeafCat79/Game_Builder_Free`) that:
 
 **Solution:** Verified each model's actual provider through the HF API and community reports before coding.
 
-### 7. ZeroGPU Requires HF PRO
+#### 7. ZeroGPU Requires HF PRO
 **Problem:** ZeroGPU (free on-demand GPU) requires HuggingFace PRO subscription ($9/month).
 **Solution:** Avoided ZeroGPU entirely by using external free APIs (Groq + Pollinations).
 
-### 8. Duplicate Score/Lives Display
+#### 8. Duplicate Score/Lives Display
 **Problem:** Generated game code was rendering UI elements twice.
 **Solution:** Added explicit instruction in system prompt to draw UI only once per frame.
 
 ---
 
-## Models Explored (and Why Rejected)
+### Models Explored (and Why Rejected)
 
 | Model | Reason Rejected |
 |---|---|
@@ -138,7 +138,7 @@ A HuggingFace Space (`LeafCat79/Game_Builder_Free`) that:
 
 ---
 
-## Final Tech Stack
+### Final Tech Stack
 
 ```
 requirements.txt:
@@ -154,7 +154,7 @@ requirements.txt:
 
 ---
 
-## Key Lessons Learned
+### Key Lessons Learned
 
 1. **Always verify inference provider availability** before writing code — many HF models have no hosted endpoint
 2. **Free quotas are monthly** — HF inference credits run out fast with image generation
@@ -164,7 +164,7 @@ requirements.txt:
 
 ---
 
-## Current Status
+### Current Status
 
 ✅ Space is running at `LeafCat79/Game_Builder_Free`
 ✅ Game code generation working (Groq)
