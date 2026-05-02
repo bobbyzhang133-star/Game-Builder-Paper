@@ -74,7 +74,7 @@ This session was a long and iterative journey building a fully working **AI-powe
 
 ---
 
-### What We Built
+### What I Built
 
 A HuggingFace Space (`LeafCat79/Game_Builder_Free`) that:
 - Takes a **theme** (e.g. "Jungle temple with ancient traps") and **game genre** as input
@@ -95,7 +95,7 @@ A HuggingFace Space (`LeafCat79/Game_Builder_Free`) that:
 
 ---
 
-### Problems We Encountered & How We Solved Them
+### Problems Encountered & Solution
 
 #### 1. Memory Limit Exceeded (OOM — 16GB)
 **Problem:** Loading large models locally (Qwen3-Coder-Next ~140GB, ERNIE-Image ~32GB) crashed the Space container.
