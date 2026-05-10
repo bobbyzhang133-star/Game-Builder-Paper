@@ -2,7 +2,13 @@
 
 ## Abstract
 
-This worked example describes a small evaluation of AI-generated quest ideas for game development. The imagined Hugging Face Space, Quest Seed Usability Lab, asks language models to generate quest seeds from realistic project briefs rather than generic prompts. The central question is whether project-based tests reveal more about AI tool quality than broad claims that a model is "good at writing." A small rubric separates fluent prose from developer usefulness by scoring constraint fit, playable mechanics, narrative hook, specificity, and rewrite burden. The pilot suggests that the most useful outputs are not always the most polished. Some generated quests sound dramatic but offer little a developer could prototype, while plainer outputs sometimes contain clearer mechanics and design constraints. The paper argues that AI tools for game development should be evaluated in context, using tasks that resemble the work a developer actually needs to do.
+Modern game development is an increasingly multi-disciplinary field where coding, narrative design, and artistic production must function as a single unit. While generative AI tools have proliferated for individual tasks like text, image, and code generation, they often operate in isolation. This fragmentation leads to "thematic drift," where generated assets—such as 2D sprites—do not align with the game’s narrative or logic, resulting in a "weird" or jarring user experience.
+
+This research explores the challenge of maintaining thematic cohesion across different AI modalities. I developed a unified game generation pipeline hosted on Hugging Face Spaces that translates a single text-based theme into a functional HTML5 game. The architecture utilizes a "Source of Truth" model: `SmolLM2-360M-Instruct` establishes the narrative, `Llama-3.1-8B` generates the game code, and `FLUX` via Pollinations.AI generates themed sprites. 
+
+During testing, a significant "Logic vs. Theme" gap was identified. For instance, while a code generator could successfully create a functional "Play Now" button for a game about the extinct Ivory-Billed Woodpecker, the lack of an integrated image generation step meant the visual theme remained incomplete or generic. Furthermore, testing with motion models revealed that AI often "rewrites" non-humanoid themes into human categories (e.g., turning a "monster chicken" into a "human chicken walk") because the underlying models lack shared thematic metadata.
+
+This study concludes that successful AI game generation requires a multimodal pipeline where thematic instructions are explicitly communicated between models to prevent artistic inconsistency. Future work will focus on deeper integration of image APIs to ensure that code and visual assets are generated with synchronized stylistic constraints.
 
 ## 1. Introduction and research question
 
