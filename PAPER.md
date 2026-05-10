@@ -2,13 +2,18 @@
 
 ## Abstract
 
-Modern game development is an increasingly multi-disciplinary field where coding, narrative design, and artistic production must function as a single unit. While generative AI tools have proliferated for individual tasks like text, image, and code generation, they often operate in isolation. This fragmentation leads to "thematic drift," where generated assets—such as 2D sprites—do not align with the game’s narrative or logic, resulting in a "weird" or jarring user experience.
+# Abstract: Orchestrating Cross-Modal Consistency in AI-Driven Game Development
 
-This research explores the challenge of maintaining thematic cohesion across different AI modalities. I developed a unified game generation pipeline hosted on Hugging Face Spaces that translates a single text-based theme into a functional HTML5 game. The architecture utilizes a "Source of Truth" model: `SmolLM2-360M-Instruct` establishes the narrative, `Llama-3.1-8B` generates the game code, and `FLUX` via Pollinations.AI generates themed sprites. 
+**Author:** Bobby Zhang
 
-During testing, a significant "Logic vs. Theme" gap was identified. For instance, while a code generator could successfully create a functional "Play Now" button for a game about the extinct Ivory-Billed Woodpecker, the lack of an integrated image generation step meant the visual theme remained incomplete or generic. Furthermore, testing with motion models revealed that AI often "rewrites" non-humanoid themes into human categories (e.g., turning a "monster chicken" into a "human chicken walk") because the underlying models lack shared thematic metadata.
+## Abstract
+Modern game development is an increasingly multi-disciplinary field where coding, narrative design, and artistic production must function as a single unit. While generative AI tools have proliferated for individual tasks, they often operate in isolation, leading to "thematic drift". This fragmentation results in a jarring user experience where generated assets—such as 2D sprites—do not align with the game’s narrative or logic.
 
-This study concludes that successful AI game generation requires a multimodal pipeline where thematic instructions are explicitly communicated between models to prevent artistic inconsistency. Future work will focus on deeper integration of image APIs to ensure that code and visual assets are generated with synchronized stylistic constraints.
+This research explores the challenge of maintaining thematic cohesion across different AI modalities by developing a unified game generation pipeline hosted on Hugging Face Spaces. The architecture utilizes a "Source of Truth" workflow: `llama-3.3-70b-versatile` (acting as **Z-Image-Engineer V4**) interprets a user theme into cinematic prompts, `llama-3.1-8b-instant` generates the HTML5 Canvas game code, and **FLUX.1-schnell** via Pollinations.AI renders the themed sprites. 
+
+A significant "Logic vs. Theme" gap was identified during development. While AI successfully generated functional code, the visual "theme" remained incomplete or generic unless every detail was explicitly described and injected into the code. To solve the "Image Gap," this project successfully implemented a system to convert generated images into **Base64 Data URIs**, injecting them directly into the HTML to ensure a self-contained, on-theme playable file. This study concludes that successful AI game generation requires a multimodal pipeline where thematic metadata is shared between models to prevent artistic inconsistency.
+
+**Keywords:** Multimodal AI, Game Development, Thematic Cohesion, Prompt Engineering, Cross-Modal Alignment.
 
 ## 1. Introduction and research question
 
