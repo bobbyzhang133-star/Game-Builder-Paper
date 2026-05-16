@@ -148,6 +148,22 @@ A key finding is the distinction between **surface theming** and **structural th
 
 This aligns with Vartinen et al.'s finding that AI-generated game content tends toward genre conventions rather than theme-specific design. Fixing this would require encoding theme as a structural constraint on game design, not merely a surface label.
 
+### 4.4 Real Test Run Results
+
+The following table records actual test runs performed on the live Game-Builder-Free Space during development. Each run used the full pipeline — Groq code generation, Z-Image-Engineer prompt enhancement, FLUX.1-schnell sprite generation, and rembg background removal — with the game rendered live in the Gradio iframe.
+
+| Test | Theme | Mode | Sprites Generated | Game Launched | What Worked | What Failed | What I Learned |
+|---|---|---|---|---|---|---|---|
+| 1 | Ancient Egyptian tomb raid with cursed mummies | Top-Down Shooter | 3 FLUX sprites (player, background, enemy) | ✅ Yes | Background rendered correctly — Egyptian desert ruins with strong atmosphere. Enemies visible falling from top. Score and health HUD displayed. | Player invisible on screen. Enemies had grey background box around them. Enemy sprites front-facing not overhead view. | Background generation is reliable; character sprite perspective and background removal need more work |
+| 2 | Deep space asteroid mining station under alien parasite attack | Top-Down Shooter | 3 FLUX sprites | ✅ Yes | Enemy sprites successfully rendered. Background rendered dark space station floor. | Player not visible. Game over screen appeared at game start due to health initialising at 0. Canvas background not filling full width — SVG tiling visible. `restartHandler` and `onShoot` both active simultaneously, click during gameplay reset the game. | Multiple listener conflicts in generated code; canvas/ctx scope bugs persist even with explicit system prompt rules |
+| 3 | Jungle temple with ancient traps | Platformer | Fallback SVG placeholders (FLUX quota exhausted) | ✅ Yes | Game structure correct — platforms, player, enemies, goal all present. Score and lives UI displayed. Player movement working. | All sprites showed as coloured boxes with text labels ("player", "enemy", "backgr"). Physics bug: player fell through platforms intermittently. Keyboard not registering on some inputs. | HF inference quota depletes fast; fallback placeholders confirm code pipeline works independently of image pipeline |
+| 4 | Neon cyberpunk city drone invasion | Top-Down Shooter | 3 FLUX sprites | ✅ Yes | Background (dark cyberpunk cityscape with neon) matched theme well. Enemy drones visible falling from top. Bullet firing on click worked. | Player spawned at bottom edge instead of center. Bullets disappeared immediately after firing — `vy` was positive (downward) instead of negative. Too many enemies — spawn rate was 90ms not 90 frames. | Spawn rate unit confusion (ms vs frames) is a recurring model error; bullet direction must be explicitly constrained to straight upward |
+| 5 | Neon cyberpunk rooftops | Platformer | 3 FLUX sprites | ✅ Yes | Sprites generated and embedded as base64 correctly. Background showed cyberpunk cityscape. | Platformer physics bug: `grounded=false` set inside platform loop `else` branch — player fell through all platforms instantly. Score displayed twice on canvas. | Grounded logic must be enforced as "set false BEFORE loop, set true only on landing" — describing it in prose is not enough, exact code pattern required |
+
+**Summary:** Across 5 test runs, the code pipeline launched a game in all 5 cases. Sprite generation succeeded in 4 of 5 runs (1 hit quota limit). However, every generated game had at least one functional bug requiring a system prompt fix. The most frequent failures were player spawn position, canvas/ctx variable scope, and bullet direction. Background images showed the strongest thematic consistency; character sprites showed the weakest perspective accuracy.
+
+A key next improvement would be an **automatic validation step** — a lightweight JavaScript linter or headless browser test that checks for common structural errors (canvas declaration position, presence of `Promise.all`, `gameOver` flag usage) before the game is presented to the user. This would catch the majority of recurring code generation bugs without requiring manual inspection.
+
 ---
 
 ## 5. Limitations
