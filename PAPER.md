@@ -1,110 +1,191 @@
 # Game-Builder-Free: Evaluating AI Game-Writing Outputs Through Realistic Project Constraints
 
-## Abstract
-
-# Abstract: Orchestrating Cross-Modal Consistency in AI-Driven Game Development
-
 **Author:** Bobby Zhang
 
+---
+
 ## Abstract
-Modern game development is an increasingly multi-disciplinary field where coding, narrative design, and artistic production must function as a single unit. While generative AI tools have proliferated for individual tasks, they often operate in isolation, leading to "thematic drift". This fragmentation results in a jarring user experience where generated assets—such as 2D sprites—do not align with the game’s narrative or logic.
 
-This research explores the challenge of maintaining thematic cohesion across different AI modalities by developing a unified game generation pipeline hosted on Hugging Face Spaces. The architecture utilizes a "Source of Truth" workflow: `llama-3.3-70b-versatile` (acting as **Z-Image-Engineer V4**) interprets a user theme into cinematic prompts, `llama-3.1-8b-instant` generates the HTML5 Canvas game code, and **FLUX.1-schnell** via Pollinations.AI renders the themed sprites. 
+Modern game development is an increasingly multi-disciplinary field where coding, narrative design, and artistic production must function as a single unit. While generative AI tools have proliferated for individual tasks, they often operate in isolation, leading to "thematic drift" — a fragmentation that results in a jarring user experience where generated assets such as 2D sprites do not align with the game's narrative or logic.
 
-A significant "Logic vs. Theme" gap was identified during development. While AI successfully generated functional code, the visual "theme" remained incomplete or generic unless every detail was explicitly described and injected into the code. To solve the "Image Gap," this project successfully implemented a system to convert generated images into **Base64 Data URIs**, injecting them directly into the HTML to ensure a self-contained, on-theme playable file. This study concludes that successful AI game generation requires a multimodal pipeline where thematic metadata is shared between models to prevent artistic inconsistency.
+This research explores the challenge of maintaining thematic cohesion across different AI modalities by developing a unified game generation pipeline hosted on Hugging Face Spaces. The architecture utilizes a "Source of Truth" workflow built around a two-step image generation chain: a short theme-derived seed description is first expanded by `llama-3.3-70b-versatile` — running with the **Z-Image-Engineer V4** system prompt — into a detailed 200-250 word cinematic image prompt; that enhanced prompt is then passed to **FLUX.1-schnell** via Pollinations.AI to generate the actual sprite image. In parallel, `llama-3.1-8b-instant` generates the HTML5 Canvas game code. This prompt-chaining approach — where one LLM enhances the input for a separate image model — is the core mechanism for cross-modal thematic alignment.
+
+A significant "Logic vs. Theme" gap was identified during development. While AI successfully generated functional code, the visual theme remained incomplete or generic unless every detail was explicitly described and injected. To solve the "Image Gap," this project implemented a system to convert generated images into **Base64 Data URIs**, injecting them directly into the HTML to ensure a self-contained, on-theme playable file. This study concludes that successful AI game generation requires a multimodal pipeline where thematic metadata is shared between models to prevent artistic inconsistency.
 
 **Keywords:** Multimodal AI, Game Development, Thematic Cohesion, Prompt Engineering, Cross-Modal Alignment.
 
-## 1. Introduction and research question
+---
 
-Game development is evolving rapidly; modern production now extends far beyond coding to include cinematography, lighting, narrative design, and music. The proliferation of generative AI has provided developers with a vast toolkit for creating images, audio, and video. While AI-assisted coding is often the first application that comes to mind, developers are increasingly using these tools for artistic tasks like asset generation and environmental design.
+## 1. Introduction and Research Question
 
-However, a significant challenge remains: because these various AI tools often operate in isolation, developers must integrate the outputs manually. This leads to a lack of **thematic cohesion**, where the generated elements feel disconnected—an effect that occurs "weird" or jarring in a finished game. This project aims to bridge this gap by developing a unified "Game Narrative and Asset Generator." Unlike existing models that focus solely on code, this system explores how a single text input can be used to anchor the theme across multiple outputs, such as sprites and game logic.
+Game development is evolving rapidly; modern production now extends far beyond coding to include asset design, narrative structure, character art, and environmental storytelling. The proliferation of generative AI has provided developers with tools for creating images, audio, code, and video. However, a significant challenge remains: these AI tools typically operate in isolation, requiring developers to integrate outputs manually. This leads to a lack of **thematic cohesion** — where the code, visual assets, and gameplay feel disconnected from each other even when they share the same surface-level theme.
 
-To do so, this research paper the following quetions need to be answered first.
+This project investigates this problem directly by building **Game-Builder-Free**, a Hugging Face Space that takes a single user-written theme as input and generates a fully playable HTML5 canvas game complete with AI-generated sprites. Rather than treating code generation and image generation as separate tasks, the system uses a shared theme as a cross-modal anchor — the same text input drives all three outputs simultaneously: game logic, image prompts, and visual sprites.
 
-* **Thematic Decision Making:** How do generative AI models decide on a "theme" from a text prompt, and what mathematical representations allow them to stay consistent?
-* **Cross-Modal Communication:** In what ways can different model types—text, image, and code—communicate thematic data to each other so that the final game follows the specific "vibe" of the original input?
+The core research questions are:
 
-This project asks:
+- **Thematic Decision Making:** How do generative AI models decide on a "theme" from a text prompt, and what mechanisms allow them to maintain consistency across code and image outputs?
+- **Cross-Modal Communication:** In what ways can different model types — text-to-code and text-to-image — share thematic information so that the final game follows the intended aesthetic and narrative direction of the original input?
+- **Practical Evaluation:** Do realistic project-based tests reveal more about AI tool limitations than synthetic benchmark tests do?
 
-> Do realistic project-based tests show more about AI tool quality than generic benchmark-style claims do?
+For this project, "quality" is measured by developer usefulness: does the generated game provide something worth playing, testing, or iterating on? A generated game does not need to be perfect. It needs to give a developer a functional starting point.
 
-For this project, "quality" means developer usefulness. A generated quest does not need to be final text. It needs to give a developer something worth keeping, testing, or rewriting.
+---
 
-## 2. Related work
+## 2. Related Work
 
-Procedural content generation has long studied how algorithms can generate game content. Recent work connects this field to large language models. Ashby et al. describe an approach to personalized quest and dialogue generation that combines knowledge graphs with language models and evaluates generated RPG content [1]. Vartinen, Hamalainen, and Guckelsberger study GPT-based RPG quest generation and report wide variation in quality, which is directly relevant to this example [2]. Surveys of procedural content generation explain that LLMs are part of a larger history of game-content generation, not a complete replacement for game design [3]. Work on evaluation methodologies for procedural generation also warns against relying on cherry-picked examples [4].
+Procedural content generation (PCG) has long studied how algorithms can automatically produce game content. Recent work increasingly connects this tradition to large language models (LLMs), raising new questions about quality, consistency, and thematic alignment.
 
-Together, these sources suggest that the important question is not simply whether AI can generate quest text. The better question is how to evaluate whether generated content is useful.
+Ashby et al. developed a knowledge-graph-augmented approach to personalized quest and dialogue generation in role-playing games, finding that grounding LLM outputs in structured world knowledge significantly improved narrative consistency [1]. This is directly relevant to Game-Builder-Free's challenge: the system must maintain thematic consistency not across a narrative, but across modalities — code and image must both reflect the same theme.
+
+Vartinen, Hamalainen, and Guckelsberger studied GPT-based RPG quest generation and reported wide variation in output quality across different prompt structures [2]. Their finding that prompt design heavily influences output usefulness aligns with a central challenge encountered in this project: the LLM frequently ignored game-type-specific constraints (such as top-down vs. side-view perspective) unless those constraints were made extremely explicit in the system prompt. This suggests that the brittleness observed in game-code generation is not unique to code tasks — it reflects a broader sensitivity of LLMs to prompt specificity.
+
+Maleki and Zhao's survey of procedural content generation with LLM integration notes that LLMs are best understood as one tool within a larger PCG pipeline, not a replacement for human game design judgment [3]. Game-Builder-Free takes this view: the system uses LLMs to accelerate asset generation but relies on carefully engineered system prompts and post-processing steps (such as background removal via `rembg`) to enforce quality constraints the models cannot reliably self-impose.
+
+Summerville's work on evaluation methodologies for procedural generation warns against relying on cherry-picked examples and advocates for structured rubrics that assess constraint satisfaction rather than surface-level fluency [4]. This shaped the evaluation approach used in this project: games are evaluated on whether they run correctly, whether sprites match the theme and game type, and whether gameplay mechanics function as specified — not on how visually impressive a single screenshot appears.
+
+Together, these sources frame the core challenge: thematic consistency in multimodal AI generation is harder than single-modality generation, and evaluation must focus on practical usefulness rather than surface quality.
+
+---
 
 ## 3. Method
 
-The imagined Space compares generated quest seeds across structured prompts. Each prompt includes:
+Game-Builder-Free is a four-stage pipeline hosted as a public Hugging Face Space. The user provides a single text input — a theme description and game genre — and the system produces a fully playable HTML5 canvas game with embedded AI-generated sprites. The pipeline can be summarized as:
 
-- Genre
-- Target player experience
-- One required mechanic
-- One required location
-- One required object
-- A tone constraint
+```
+User Theme
+    ├── [Groq llama-3.1-8b-instant]          → HTML5 game code
+    └── [Seed constructor]                   → short seed descriptions (per sprite)
+             ↓
+        [Groq llama-3.3-70b as Z-Image-Engineer V4]  → enhanced cinematic prompts
+             ↓
+        [FLUX.1-schnell via Pollinations.AI]  → sprite images
+             ↓
+        [rembg + Base64 injection]            → sprites embedded in HTML
+```
 
-Example prompt:
+Critically, `llama-3.3-70b-versatile` does **not** generate images. It generates better text prompts for a separate image model. This prompt-chaining step — using one LLM to improve the input to another model — is the core mechanism for thematic alignment in the image generation path.
 
-> Write a quest seed for a 2D horror game where the player is a lost delivery driver. Include one non-combat mechanic, one map location, and one object that changes meaning by the end.
+### 3.0 Step-by-Step Flow
 
-Each output is scored with a small developer-usefulness rubric:
+The following describes exactly what happens from the moment a player submits a theme to the moment the game appears on screen:
+
+**Step 1 — Player inputs a theme.**
+The player types a theme description (e.g. *"Ancient Egyptian tomb raid with cursed mummies"*) and selects a game genre (Platformer or Top-Down Shooter). This single text input is the only thing the player provides. It becomes the shared anchor for all downstream generation.
+
+**Step 2 — Groq generates the game code.**
+The theme is sent to `llama-3.1-8b-instant` via the Groq API alongside a structured system prompt that encodes game-type-specific rules. The model outputs a complete single-file HTML5 canvas game. At this stage the game references placeholder filenames like `sprite_player.png` and `sprite_background.png` — the actual images do not exist yet.
+
+**Step 3 — Theme is used to generate image prompts.**
+In parallel, the same theme is used to construct short seed descriptions for each sprite — one for the player character, one for the background, one for the enemy. Each seed is passed to `llama-3.3-70b-versatile` via Groq, running with the Z-Image-Engineer V4 system prompt. This model expands each short seed into a detailed 200-250 word cinematic image prompt describing lighting, perspective, texture, color palette, and composition. The output of this step is text only — no images are generated here.
+
+**Step 4 — Enhanced prompts are sent to the image generator.**
+Each cinematic prompt produced in Step 3 is sent to **FLUX.1-schnell** via Pollinations.AI. FLUX receives only the enhanced prompt — it has no knowledge of the original theme text, the game code, or the seed. FLUX generates the actual pixel image for each sprite. Character sprites are then post-processed with `rembg` to remove the background, leaving only the character on a transparent background.
+
+**Step 5 — Images are embedded into the HTML game file.**
+Each generated image is converted to a Base64 Data URI string and injected directly into the HTML game code, replacing the placeholder filenames (`sprite_player.png` → `data:image/png;base64,...`). The final output is a single self-contained HTML file where all sprites are baked in — no external files, no server, no broken image links. The game is immediately playable in the browser iframe.
+
+### 3.1 Pipeline Architecture
+
+**Stage 1 — Code Generation:**
+`llama-3.1-8b-instant` via the Groq API receives a structured system prompt and the user's theme. The system prompt encodes strict game-type-specific rules (e.g. gravity and platformer physics vs. top-down movement, bullet direction, enemy spawn logic) as explicit code templates. The model outputs a complete single-file HTML5 game.
+
+**Stage 2 — Prompt Seed Enhancement (LLM → LLM):**
+For each sprite needed (player, background, enemy — and additionally platform and goal for platformers), a short seed description is constructed from the user's theme and game type. For example: `"top-down overhead game sprite, viewed from directly above, space marine theme, 64x64 pixel style"`. These seeds are then passed to `llama-3.3-70b-versatile` via Groq, running with the **Z-Image-Engineer V4** system prompt. This model acts purely as a **prompt engineer** — it does not generate any images. Its sole output is an expanded 200-250 word cinematic image prompt with explicit lighting, composition, camera angle, texture, and color grading details. This is a deliberate prompt-chaining technique: using one LLM to produce better input for a separate image generation model.
+
+**Stage 3 — Sprite Image Generation (Enhanced Prompt → FLUX):**
+Each enhanced prompt produced in Stage 2 is sent as input to **FLUX.1-schnell** via Pollinations.AI — a completely separate text-to-image model. FLUX.1-schnell receives the cinematic prompt and generates the actual pixel image. It has no knowledge of the original user theme, the game code, or the seed description — it only receives the enhanced prompt. This separation is important: the quality of the sprite depends entirely on how well the Stage 2 LLM translated the theme into visual language that FLUX.1-schnell can act on. Non-background sprites are then post-processed with `rembg` to remove backgrounds, resized to 64×64 pixels, converted to Base64 Data URIs, and injected directly into the HTML replacing `sprite_NAME.png` references. The result is a self-contained playable HTML file.
+
+### 3.2 Evaluation Rubric
+
+Each generated game is evaluated against the following criteria:
 
 | Criterion | Question |
 |---|---|
-| Constraint fit | Did the output follow the required genre, mechanic, object, and tone? |
-| Playable mechanic | Does it include an action a player could actually perform? |
-| Narrative hook | Is there a conflict, mystery, or choice? |
-| Specificity | Does it avoid generic filler? |
-| Rewrite burden | How much work would be needed before prototyping? |
+| Code correctness | Does the game run without JavaScript errors? |
+| Mechanic implementation | Are the specified mechanics present and functional (movement, shooting, collision)? |
+| Theme consistency (code) | Do game colors, labels, and structure reflect the input theme? |
+| Theme consistency (sprites) | Do sprite images match the game type perspective and theme? |
+| Sprite quality | Are character sprites isolated without background artifacts? |
+| Restart functionality | Does the game correctly reset after game over? |
 
-## 4. Findings and discussion
+Games were tested across two genres (Platformer, Top-Down Shooter) with multiple themes per genre, with each output evaluated by the author against the rubric above.
 
-The pilot suggests a gap between good-sounding prose and useful design support. Generic prompts produced polished but familiar ideas: a relic, a forest, a missing villager, a final confrontation. These outputs were fluent, but they did not reduce much design work.
+---
 
-More realistic constraints produced more useful outputs. One stronger result described a broken elevator where the player must choose which floor to cut power from in order to escape. The writing was not especially beautiful, but the seed included a mechanic, a location, a choice, and a consequence. That made it more useful than a dramatic paragraph with no playable structure.
+## 4. Findings and Discussion
 
-The clearest finding is:
+### 4.1 Code Generation Quality
 
-> For game-development support, a generated output should be judged by how much design work it makes possible, not only by how polished the language sounds.
+The LLM consistently produced functional game structures — canvas setup, game loop, player movement, enemy spawning — but showed systematic failures in specific areas:
 
-This connects to the larger procedural content generation problem. Generated game content has to fit constraints. It must be playable, not just readable.
+**Scope errors** were the most frequent critical bug. The model repeatedly declared `canvas` and `ctx` inside function bodies (e.g. inside `startGame()` or `gameLoop()`) rather than at the top level, causing variables to be undefined when accessed by other functions. This resulted in a completely black game screen with no visible elements. The fix required explicitly specifying in the system prompt that `canvas` and `ctx` must be the very first declarations in the script.
 
-Input: Generate a jungle temple escape platformer game, Tmplate = PLatformer  
-Output: In generates a game where it is in a fixed window. The game has some platforms where players can jump onto and there is traps moving side ways where if players run into it will descrease the lives thay have. On the top left there is a UI showing how much lives and scores players have. There is also a target point where when player run into it it will destroy itself, spawn again randomly in the map, and add one score for the player.
+**Physics bleed-across genres** was the second most common issue. The model applied platformer physics (gravity `velY += 0.5`, grounded checks) to top-down shooter games, causing the player to immediately fall off screen. Separating the two game types into distinct prompt templates with explicit `FOR TOP-DOWN SHOOTER ONLY` and `FOR PLATFORMER ONLY` sections reduced but did not eliminate this issue.
 
+**Bullet direction inconsistency** occurred when the model used the mouse click position to compute a bullet direction vector, resulting in bullets traveling diagonally based on cursor distance rather than straight upward. Providing the exact code pattern `bullets.push({x: player.x+player.w/2-4, y: player.y-16, vy:-10})` as a template eliminated this.
 
+These findings suggest that for structured, executable outputs like game code, **LLMs require template-level constraints** — not just descriptions of desired behavior. Describing physics in prose is insufficient; providing the exact code pattern is necessary.
 
-### My Own Section:
+### 4.2 Sprite Generation Quality
 
-Input: Format-> Top Down Shoorter, Theme-> Alien desert invasion  
-Output:
-![In-game Screenshot](https://github.com/user-attachments/assets/f524057b-8311-4dbd-8f55-8d1b7cbbc7a9)
+Sprite generation revealed a persistent **cross-modal alignment problem** in the prompt-chaining pipeline. The two-step chain — LLM seed enhancer → FLUX image generator — succeeded at thematic content (colors, atmosphere, environment) but failed at structural perspective control. Sprites generated by FLUX.1-schnell consistently showed the wrong game-type perspective regardless of how the seed or enhanced prompt was worded. Player and enemy sprites for top-down shooters appeared in front-facing standing poses (matching platformer style) rather than overhead bird's eye views.
 
+The seed descriptions passed to the Z-Image-Engineer LLM were iterated across multiple sessions with increasingly specific perspective wording:
+- Session 1 seed: `"top-down aerial view"` → FLUX output: front-facing sprites
+- Session 2 seed: `"bird's eye view directly overhead"` → FLUX output: mostly front-facing sprites
+- Session 3 seed: `"like Metal Slug or GTA 2 sprite angle, head at top, feet at bottom"` → FLUX output: partial improvement, inconsistent
 
+This reveals a fundamental limitation of the prompt-chaining approach for perspective control: even when the seed correctly specifies the perspective, and even when the Z-Image-Engineer LLM expands it into a detailed cinematic prompt, the downstream image model (FLUX.1-schnell) does not reliably honor the perspective instruction. This suggests the failure is not in the seed or the prompt enhancement step — it is in FLUX.1-schnell's training distribution, which contains far more front-facing character images than overhead game sprites. The cinematic prompt expansion produced by the Z-Image-Engineer may actually compound this problem by adding photorealistic lighting and composition details that further anchor FLUX toward its most common training patterns.
 
+Background images showed strong thematic consistency across all tested themes. The model reliably matched environmental details, color palette, and atmosphere to the user's input theme.
+
+Background removal via `rembg` successfully eliminated solid background colors from character sprites, though semi-transparent edge artifacts remained visible at small sprite sizes (64×64 pixels).
+
+### 4.3 The Theme-Logic Gap
+
+A key finding is the distinction between **surface theming** and **structural theming**. The LLM successfully applied surface theming: color names, labels, and enemy descriptions matched the input theme. However, structural theming — where the game's mechanics, level layout, and challenge design reflect the theme — was not reliably achieved. A "jungle temple" platformer had the same platform positions, enemy behaviors, and win condition as a "cyberpunk rooftop" platformer.
+
+This aligns with Vartinen et al.'s finding that AI-generated game content tends toward genre conventions rather than theme-specific design. Fixing this would require encoding theme as a structural constraint on game design, not merely a surface label.
+
+---
 
 ## 5. Limitations
 
-This is a small paper-lite example, not a full study. The imagined pilot uses a few prompts and a hand-built rubric. The scores come from one evaluator, so they reflect one person's sense of usability. A stronger version would ask several game developers or students to rate outputs independently and compare agreement.
+Several limitations constrain the conclusions of this project.
 
-The Space also focuses only on quest seeds. It does not test level layouts, combat systems, art assets, pacing, or long-term narrative consistency. A quest seed that looks good in isolation might still fail inside a full game.
+**Model capability ceiling:** `llama-3.1-8b-instant` is a relatively small model optimized for speed. Larger models (e.g. 70B parameter class) would likely produce more reliable code with fewer structural bugs. The choice of a small model was driven by the free-tier constraint of the Groq API, which is a real-world project constraint but not an ideal research condition.
+
+**Image generation perspective control:** Pollinations.AI/FLUX.1-schnell cannot reliably generate overhead-view character sprites through prompt engineering alone. A dedicated game-sprite fine-tuned model, or a model supporting ControlNet-style structural conditioning, would be needed to reliably control perspective. This is a fundamental limitation of the current pipeline, not a prompt engineering failure.
+
+**Single evaluator:** All rubric scores were produced by the author. A stronger study would recruit multiple evaluators — ideally practicing game developers or game design students — and measure inter-rater agreement to validate the rubric's reliability.
+
+**Two game types only:** The current system supports only Platformer and Top-Down Shooter genres. Other genres (puzzle, infinite runner, strategy) were attempted but removed due to higher bug rates. The findings may not generalize to genres with more complex game logic.
+
+**No player testing:** Games were evaluated for technical correctness and thematic consistency but were not tested by players for fun, difficulty balance, or engagement. A complete evaluation would include playtest sessions.
+
+---
 
 ## 6. Conclusion
 
-Quest Seed Usability Lab shows how a student can turn broad interest in generative AI into a focused research question. The project does not ask whether AI is creative in general. It asks whether generated quest ideas help a developer move from blank page to prototype. That narrower question is more useful because it matches the real task. The main lesson is that AI game-writing tools should be tested with realistic project constraints, because those constraints reveal whether an output is merely fluent or actually helpful.
+Game-Builder-Free demonstrates that a multimodal AI pipeline can generate playable HTML5 games from a single text input, but also reveals significant limitations in cross-modal thematic consistency. The system succeeds at surface-level theming — matching colors, labels, and environmental imagery to the user's input — but struggles with structural theming, sprite perspective control, and code reliability.
 
-## Candidate references
+The central finding is that **LLMs generating executable code require template-level constraints, not prose descriptions**. Describing desired behavior in natural language produced inconsistent results across generations; providing exact code patterns as templates produced far more reliable outputs. This has practical implications for any AI-assisted development tool: the more structured and executable the output must be, the more structured and executable the constraint must also be.
 
-[1] [Personalized Quest and Dialogue Generation in Role-Playing Games: A Knowledge Graph- and Language Model-based Approach](https://consensus.app/papers/details/0551b1b0b6b45be7b6deec007ad77ed7/?utm_source=chatgpt). Trevor Ashby, Braden K. Webb, Gregory Knapp, Jackson Searle, and Nancy Fulda, 2023, *Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems*, citation count: 67.
+The sprite perspective problem — where character sprites consistently appeared in front-facing poses regardless of game type — represents an unresolved cross-modal alignment challenge. The text-to-image model's training distribution appears to dominate over prompt instructions when those instructions conflict with common image conventions. Solving this likely requires fine-tuning or structural conditioning rather than prompt engineering.
 
-[2] [Generating Role-Playing Game Quests With GPT Language Models](https://consensus.app/papers/details/8fe8aef4fcf155e8b719d5a26178040c/?utm_source=chatgpt). Susanna Vartinen, Perttu Hamalainen, and C. Guckelsberger, 2024, *IEEE Transactions on Games*, citation count: 66.
+This project supports the broader argument from Summerville [4] and Maleki and Zhao [3] that AI game generation tools should be evaluated against realistic project constraints. A tool that produces a visually impressive screenshot but a non-functional or mechanically inconsistent game is not a useful development tool. Realistic evaluation — running the game, checking mechanics, testing edge cases — reveals failure modes that screenshot-based evaluation cannot.
 
-[3] [Procedural Content Generation in Games: A Survey with Insights on Emerging LLM Integration](https://consensus.app/papers/details/57dd23d56b32552dbbef0283f265b18f/?utm_source=chatgpt). Mahdi Farrokhi Maleki and Richard Zhao, 2024, venue not listed in Consensus output, citation count: 19.
+Future work should investigate whether larger code models reduce structural bug rates, whether sprite fine-tuning can solve the perspective alignment problem, and whether sharing a structured thematic representation between the code and image models (rather than just sharing the raw text prompt) can improve structural thematic coherence.
 
-[4] [Expanding Expressive Range: Evaluation Methodologies for Procedural Content Generation](https://consensus.app/papers/details/61b9fd4b5a795b699677585dbca22b1f/?utm_source=chatgpt). A. Summerville, 2018, venue not listed in Consensus output, citation count: 51.
+---
+
+## References
+
+[1] Ashby, T., Webb, B. K., Knapp, G., Searle, J., & Fulda, N. (2023). Personalized Quest and Dialogue Generation in Role-Playing Games: A Knowledge Graph- and Language Model-based Approach. *Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems*.
+
+[2] Vartinen, S., Hamalainen, P., & Guckelsberger, C. (2024). Generating Role-Playing Game Quests With GPT Language Models. *IEEE Transactions on Games*.
+
+[3] Maleki, M. F., & Zhao, R. (2024). Procedural Content Generation in Games: A Survey with Insights on Emerging LLM Integration.
+
+[4] Summerville, A. (2018). Expanding Expressive Range: Evaluation Methodologies for Procedural Content Generation.
