@@ -156,8 +156,9 @@ The following documents actual test runs from the live Game-Builder-Free Space. 
 
 **Test 1 — Ancient Egyptian Tomb Raid (Top-Down Shooter)**
 
-[Test 1 Screenshot](<img width="1438" height="778" alt="Screenshot 2026-05-18 at 12 22 37 PM" src="https://github.com/user-attachments/assets/98ca16ff-b2cd-4a0f-b108-387f219b1508" />
-)
+
+<img width="811" height="442" alt="Screenshot 2026-05-13 at 10 32 46 AM" src="https://github.com/user-attachments/assets/c63b8083-6877-4065-9499-7a0474c1487d" />
+
 
 | Field | Details |
 |---|---|
