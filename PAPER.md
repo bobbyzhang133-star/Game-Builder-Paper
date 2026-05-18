@@ -156,7 +156,7 @@ The following documents actual test runs from the live Game-Builder-Free Space. 
 
 **Test 1 — Ancient Egyptian Tomb Raid (Top-Down Shooter)**
 
-[Test 1 Screenshot](file:///Users/bobbyzhang/Desktop/Test1.webp)
+[Test 1 Screenshot](file:///Users/bobbyzhang/Desktop/Screenshot%202026-05-13%20at%2010.32.46%E2%80%AFAM.png)
 
 | Field | Details |
 |---|---|
