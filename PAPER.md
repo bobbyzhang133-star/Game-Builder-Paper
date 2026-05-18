@@ -201,6 +201,25 @@ The following documents actual test runs from the live Game-Builder-Free Space. 
 | **What I Learned** | Most mechanically complete generation to date — movement, shooting, collision, scoring, and game over all working in one run. Player spawn position is a persistent model error despite explicit system prompt rules. |
 
 
+---
+
+**Test 4 — Deep Space Mining Station, Enemies Approach Player + Escalating Difficulty (Top-Down Shooter)**
+
+[Test 4 Screenshot — add image here]
+
+| Field | Details |
+|---|---|
+| **Theme** | Deep space asteroid mining station — lone space marine in hazmat suit defending from alien parasites that move toward the player, with monsters spawning more frequently and moving faster over time |
+| **Mode** | Top-Down Shooter |
+| **Input** | Deep space asteroid mining station under alien parasite attack: a lone space marine in a bulky hazmat suit defending the mining platform from waves of alien parasites dropping from the top of the screen. The parasites are small fast-moving creatures with glowing green bioluminescent markings. Monster will approach towards the player, and monsters will spawn more and move quicker as time progress. Bullets shoot straight up. |
+| **Sprites Generated** | 3 FLUX sprites — space marine player, dark industrial station background, alien parasite enemy |
+| **Game Launched** | ✅ Yes |
+| **What Worked** | Theme matched the input accurately — background correctly depicted a dark industrial space station floor. Player and enemy sprites rendered as real images (not placeholders). 4-direction WASD movement functional. Left-click bullet firing straight upward working. Enemy speed escalation implemented (`Math.min(1 + score/500, 2)`) — enemies speed up as score increases. Score increments on bullet-enemy collision. Health decrement on enemy contact. Game over screen displayed. |
+| **What Failed** | Player spawned at bottom edge (`y: canvas.height-24`) instead of center — persistent model error. Sprite perspective still front-facing not overhead view — space marine appears standing upright rather than top-down. Sprites generated are too large relative to the game canvas and visual style. Game does not end when player health reaches 0 — the `gameOver` flag is set but the restart handler uses `canvas.click` instead of a proper event listener, so the game loop continues running. |
+| **What I Learned** | Player spawn position (`canvas.height - 24` instead of `canvas.width/2 - 24, canvas.height/2 - 24`) is a recurring model error that persists despite explicit system prompt rules. The game-over restart mechanism requires exact code template enforcement — `canvas.click` is not a valid browser API. Sprite size relative to the canvas needs explicit pixel dimension constraints in the prompt. Sprite perspective (front-facing vs overhead) remains an unresolved FLUX training distribution issue. |
+
+---
+
 A key next improvement would be an **automatic validation step** — a lightweight JavaScript linter or headless browser test that checks for common structural errors (canvas declaration position, presence of `Promise.all`, `gameOver` flag usage) before the game is presented to the user. This would catch the majority of recurring code generation bugs without requiring manual inspection.
 
 ---
