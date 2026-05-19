@@ -174,7 +174,8 @@ The following documents actual test runs from the live Game-Builder-Free Space. 
 
 **Test 2 — Deep Space Mining Station, First Attempt (Top-Down Shooter)**
 
-![Test 2 Screenshot]()
+<img width="719" height="413" alt="Screenshot 2026-05-16 114554" src="https://github.com/user-attachments/assets/f2512e44-71dd-4958-acc1-1697b370ed96" />
+
 | Field | Details |
 |---|---|
 | **Theme** | Deep space asteroid mining station under alien parasite attack |
